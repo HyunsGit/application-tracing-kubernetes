@@ -20,3 +20,5 @@ spec:
       datacenter: "datacenter3"
       mode: "test"
       timeout: "3m"
+  agent:
+    strategy: DaemonSet
