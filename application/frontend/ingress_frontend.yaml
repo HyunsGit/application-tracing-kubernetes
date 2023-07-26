@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: jaeger-ing
+  name: frontend-ing
   namespace: mgt
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
@@ -9,13 +9,13 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false" # HTTPS로의 강제 리다이렉션 방지
 spec:
   rules:
-  - host: hyuns-jaeger.hyuns.link
+  - host: apifrontend-jaeger.hyuns.link
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: simple-prod-query
+            name: do-visit-counter-frontend
             port:
-              number: 16686
+              number: 8000

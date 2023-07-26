@@ -2,7 +2,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from: default/jaeger-operator-serving-cert
+    cert-manager.io/inject-ca-from: mgt/jaeger-operator-serving-cert
     controller-gen.kubebuilder.io/version: v0.8.0
   labels:
     app.kubernetes.io/name: jaeger-operator
@@ -12864,7 +12864,7 @@ metadata:
     app.kubernetes.io/name: jaeger-operator
     name: jaeger-operator
   name: jaeger-operator
-  namespace: default
+  namespace: mgt
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -12873,7 +12873,7 @@ metadata:
     app.kubernetes.io/name: jaeger-operator
     name: jaeger-operator
   name: leader-election-role
-  namespace: default
+  namespace: mgt
 rules:
 - apiGroups:
   - ""
@@ -12917,7 +12917,7 @@ metadata:
     app.kubernetes.io/name: jaeger-operator
     name: jaeger-operator
   name: prometheus
-  namespace: default
+  namespace: mgt
 rules:
 - apiGroups:
   - ""
@@ -13231,7 +13231,7 @@ metadata:
     app.kubernetes.io/name: jaeger-operator
     name: jaeger-operator
   name: leader-election-rolebinding
-  namespace: default
+  namespace: mgt
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -13239,7 +13239,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: jaeger-operator
-  namespace: default
+  namespace: mgt
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -13251,7 +13251,7 @@ metadata:
     app.kubernetes.io/name: jaeger-operator
     name: jaeger-operator
   name: prometheus
-  namespace: default
+  namespace: mgt
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -13275,7 +13275,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: jaeger-operator
-  namespace: default
+  namespace: mgt
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -13291,7 +13291,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: jaeger-operator
-  namespace: default
+  namespace: mgt
 ---
 apiVersion: v1
 kind: Service
@@ -13301,7 +13301,7 @@ metadata:
     app.kubernetes.io/name: jaeger-operator
     name: jaeger-operator
   name: jaeger-operator-metrics
-  namespace: default
+  namespace: mgt
 spec:
   ports:
   - name: https
@@ -13319,7 +13319,7 @@ metadata:
     app.kubernetes.io/name: jaeger-operator
     name: jaeger-operator
   name: jaeger-operator-webhook-service
-  namespace: default
+  namespace: mgt
 spec:
   ports:
   - port: 443
@@ -13336,7 +13336,7 @@ metadata:
     app.kubernetes.io/name: jaeger-operator
     name: jaeger-operator
   name: jaeger-operator
-  namespace: default
+  namespace: mgt
 spec:
   replicas: 1
   selector:
@@ -13428,6 +13428,13 @@ spec:
           secretName: jaeger-operator-service-cert
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      tolerations:
+      - key: "mgt"
+        operator: "Equal"
+        value: "present"
+        effect: "NoSchedule"
+      nodeSelector:
+        mgt: present   
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -13436,11 +13443,11 @@ metadata:
     app.kubernetes.io/name: jaeger-operator
     name: jaeger-operator
   name: jaeger-operator-serving-cert
-  namespace: default
+  namespace: mgt
 spec:
   dnsNames:
-  - jaeger-operator-webhook-service.default.svc
-  - jaeger-operator-webhook-service.default.svc.cluster.local
+  - jaeger-operator-webhook-service.mgt.svc
+  - jaeger-operator-webhook-service.mgt.svc.cluster.local
   issuerRef:
     kind: Issuer
     name: jaeger-operator-selfsigned-issuer
@@ -13456,7 +13463,7 @@ metadata:
     app.kubernetes.io/name: jaeger-operator
     name: jaeger-operator
   name: jaeger-operator-selfsigned-issuer
-  namespace: default
+  namespace: mgt
 spec:
   selfSigned: {}
 ---
@@ -13464,7 +13471,7 @@ apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from: default/jaeger-operator-serving-cert
+    cert-manager.io/inject-ca-from: mgt/jaeger-operator-serving-cert
   labels:
     app.kubernetes.io/name: jaeger-operator
     name: jaeger-operator
@@ -13475,7 +13482,7 @@ webhooks:
   clientConfig:
     service:
       name: jaeger-operator-webhook-service
-      namespace: default
+      namespace: mgt
       path: /mutate-v1-deployment
   failurePolicy: Ignore
   name: deployment.sidecar-injector.jaegertracing.io
@@ -13501,7 +13508,7 @@ webhooks:
   clientConfig:
     service:
       name: jaeger-operator-webhook-service
-      namespace: default
+      namespace: mgt
       path: /mutate-jaegertracing-io-v1-jaeger
   failurePolicy: Fail
   name: mjaeger.kb.io
@@ -13521,7 +13528,7 @@ apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from: default/jaeger-operator-serving-cert
+    cert-manager.io/inject-ca-from: mgt/jaeger-operator-serving-cert
   labels:
     app.kubernetes.io/name: jaeger-operator
     name: jaeger-operator
@@ -13532,7 +13539,7 @@ webhooks:
   clientConfig:
     service:
       name: jaeger-operator-webhook-service
-      namespace: default
+      namespace: mgt
       path: /validate-jaegertracing-io-v1-jaeger
   failurePolicy: Fail
   name: vjaeger.kb.io

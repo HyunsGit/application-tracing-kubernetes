@@ -22,8 +22,15 @@ spec:
           imagePullPolicy: Always
           env:
             - name: COUNTER_ENDPOINT
-              value: "http://do-visit-counter-backend.default.svc.cluster.local:5000"
+              value: "http://do-visit-counter-backend.mgt.svc.cluster.local:5000"
           ports:
             - name: frontend-port
               containerPort: 8000
               protocol: TCP
+      tolerations:
+      - key: "mgt"
+        operator: "Equal"
+        value: "present"
+        effect: "NoSchedule"
+      nodeSelector:
+        mgt: present  

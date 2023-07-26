@@ -1,34 +1,9 @@
-#apiVersion: jaegertracing.io/v1
-#kind: Jaeger
-#metadata:
-#  name: simplest
-
-#apiVersion: jaegertracing.io/v1
-#kind: Jaeger
-#metadata:
-#  name: simple-prod
-#spec:
-#  strategy: production
-#  collector:
-#    maxReplicas: 5
-#    resources:
-#      limits:
-#        cpu: 100m
-#        memory: 128Mi
-#  storage:
-#    type: memory
-#    options:
-#      memory:
-#        max-traces: 100000
-#  ingress:
-#    enabled: true
-#  agent:
-#    strategy: DaemonSet
-
 apiVersion: jaegertracing.io/v1
 kind: Jaeger
 metadata:
   name: simple-prod
+  labels:
+    jaegertracing.io/operated-by: default.jaeger-operator
 spec:
   strategy: production
   collector:
@@ -38,10 +13,21 @@ spec:
         cpu: 100m
         memory: 128Mi
   storage:
-    type: memory
+    type: cassandra
     options:
-      memory:
-        max-traces: 100000
+      cassandra:
+#        host: 172.30.17.32:9042
+#        servers: 172.30.18.176
+#        servers: cassandra.default.svc
+        servers: 172.30.17.32
+#        port: 9042
+        keyspace: tutorialspoint
+        username: cassandra
+        password: cassandra
+#    cassandraCreateSchema:
+#      datacenter: "datacenter1"
+#      mode: "test"
+#      timeout: "3m"
   ingress:
     enabled: true
   agent:

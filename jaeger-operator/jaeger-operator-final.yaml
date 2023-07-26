@@ -1,0 +1,30 @@
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: simple-prod
+  labels:
+    jaegertracing.io/operated-by: mgt.jaeger-operator         # Must match namespace where jaeger-operator is deployed(jaeger-operator가 배포되어있는 namespace 명시)
+spec:
+  strategy: production
+  collector:
+    maxReplicas: 5
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+  storage:
+    type: cassandra
+    options:
+      cassandra:
+        servers: 10.240.1.62                  # IP of Cassandra VM(can either be public or private depending on VPC scope) Cassandra가 설치되어있는 VM IP
+        keyspace: smtbrc_data                 # Keyspace of a Cassandra(must create a new keyspace from cqlsh) Cassandra에서 생성한 keyspace
+        username: cassandra                   # Default superuser(기본 계정)
+        password: cassandra                   # Default password(기본 비번)
+#    cassandraCreateSchema:
+#      datacenter: "datacenter1"
+#      mode: "test"
+#      timeout: "3m"
+#  ingress:
+#    enabled: true
+  agent:
+    strategy: DaemonSet

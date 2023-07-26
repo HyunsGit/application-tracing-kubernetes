@@ -15,6 +15,7 @@ spec:
       labels:
         app: cassandra
     spec:
+#      hostNetwork: True
       terminationGracePeriodSeconds: 1800
       containers:
       - name: cassandra
@@ -75,6 +76,7 @@ spec:
         volumeMounts:
         - name: cassandra-data
           mountPath: /cassandra_data
+#      hostNetwork: true
   # These are converted to volume claims by the controller
   # and mounted at the paths mentioned above.
   # do not use these in production until ssd GCEPersistentDisk or other ssd pd
@@ -87,4 +89,3 @@ spec:
       resources:
         requests:
           storage: 10Gi
-#      hostNetwork: true
