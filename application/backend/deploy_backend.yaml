@@ -31,15 +31,4 @@ spec:
         effect: "NoSchedule"
       nodeSelector:
         mgt: present  
----
-apiVersion: v1
-kind: Service
-metadata:
-    name: do-visit-counter-backend
-spec:
-    selector:
-        app: do-visit-counter-backend
-    ports:
-        - protocol: TCP
-          port: 5000
-          targetPort: 5000
+
